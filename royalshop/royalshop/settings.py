@@ -14,7 +14,7 @@ SECRET_KEY = 'django-insecure-royalshop-change-this-in-production-2024'
 
 DEBUG = True  # Set to False in production
 
-ALLOWED_HOSTS = ['*']  # Restrict in production
+ALLOWED_HOSTS = ['52.66..239.49','*']  # Restrict in production
 
 # ─── Installed Apps ──────────────────────────────────────────────────────────
 INSTALLED_APPS = [
