@@ -1,0 +1,81 @@
+{% extends 'admin_panel/base_admin.html' %}
+{% block title %}Banners{% endblock %}
+{% block content %}
+<div class="admin-page-header mb-4">
+  <h4 class="admin-page-title">Homepage Banners</h4>
+</div>
+
+<div class="row g-4">
+  <!-- Add Banner Form -->
+  <div class="col-lg-5">
+    <div class="admin-card">
+      <h6 class="filter-heading mb-3"><i class="bi bi-plus-circle me-2 gold-text"></i>Add Banner</h6>
+      <form method="POST" action="{% url 'admin_banner_add' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label royal-label">Title *</label>
+            <input type="text" name="title" class="form-control royal-input" required placeholder="Grand Sale – Up to 50% Off!"/>
+          </div>
+          <div class="col-12">
+            <label class="form-label royal-label">Subtitle</label>
+            <input type="text" name="subtitle" class="form-control royal-input" placeholder="Shop our exclusive collection"/>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label royal-label">Badge Text</label>
+            <input type="text" name="badge_text" class="form-control royal-input" placeholder="UP TO 50% OFF"/>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label royal-label">Button Text</label>
+            <input type="text" name="button_text" class="form-control royal-input" value="Shop Now"/>
+          </div>
+          <div class="col-md-8">
+            <label class="form-label royal-label">Button URL</label>
+            <input type="text" name="button_url" class="form-control royal-input" value="/products/"/>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label royal-label">Order</label>
+            <input type="number" name="order" class="form-control royal-input" value="0" min="0"/>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label royal-label">Background Color</label>
+            <input type="color" name="bg_color" class="form-control royal-input" value="#0B3D2E" style="height:42px"/>
+          </div>
+          <div class="col-12">
+            <label class="form-label royal-label">Banner Image</label>
+            <input type="file" name="image" class="form-control royal-input" accept="image/*"/>
+          </div>
+          <div class="col-12">
+            <button type="submit" class="btn btn-gold w-100">Add Banner</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Banners List -->
+  <div class="col-lg-7">
+    <div class="admin-card">
+      <h6 class="filter-heading mb-3"><i class="bi bi-images me-2 gold-text"></i>Current Banners ({{ banners.count }})</h6>
+      {% for banner in banners %}
+      <div class="banner-row">
+        <div style="width:70px;height:45px;border-radius:8px;background:{{ banner.bg_color }};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          {% if banner.image %}<img src="{{ banner.image.url }}" style="width:100%;height:100%;object-fit:cover;border-radius:8px"/>
+          {% else %}<i class="bi bi-image text-white"></i>{% endif %}
+        </div>
+        <div class="flex-grow-1">
+          <div class="fw-semibold small">{{ banner.title|truncatechars:40 }}</div>
+          <small class="text-muted">Order: {{ banner.order }} · {{ banner.button_text }}</small>
+        </div>
+        <form method="POST" action="{% url 'admin_banner_delete' banner.id %}" onsubmit="return confirm('Delete this banner?')">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></button>
+        </form>
+      </div>
+      {% empty %}
+      <p class="text-muted small text-center py-3">No banners yet. Add one above.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

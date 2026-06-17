@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Admin Login | RoyalShop</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Jost:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{% static 'css/royal.css' %}"/>
+  <style>
+    body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at top,#0d4a38 0%,#071a12 100%)}
+    .admin-login-card{background:var(--card-bg);border-radius:20px;padding:3rem;width:100%;max-width:420px;box-shadow:0 25px 80px rgba(0,0,0,.6)}
+    .lock-icon{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-light));display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem}
+  </style>
+</head>
+<body>
+<div class="admin-login-card">
+  <div class="text-center mb-4">
+    <div class="lock-icon"><i class="bi bi-shield-lock-fill gold-text fs-2"></i></div>
+    <h4 style="font-family:'Playfair Display',serif">Admin Access</h4>
+    <p class="text-muted small">RoyalShop Control Panel</p>
+  </div>
+
+  {% if messages %}
+  {% for msg in messages %}
+  <div class="alert alert-{{ msg.tags }} py-2 small">{{ msg }}</div>
+  {% endfor %}
+  {% endif %}
+
+  <form method="POST">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label class="form-label royal-label">Username</label>
+      <div class="input-icon-wrap">
+        <i class="bi bi-person input-icon"></i>
+        <input type="text" name="username" class="form-control royal-input ps-5" required placeholder="Admin username" autofocus/>
+      </div>
+    </div>
+    <div class="mb-4">
+      <label class="form-label royal-label">Password</label>
+      <div class="input-icon-wrap">
+        <i class="bi bi-lock input-icon"></i>
+        <input type="password" name="password" class="form-control royal-input ps-5" required placeholder="Password"/>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-gold w-100 btn-lg">
+      <i class="bi bi-shield-check me-2"></i>Enter Admin Panel
+    </button>
+  </form>
+  <p class="text-center mt-3"><a href="{% url 'home' %}" class="text-muted small"><i class="bi bi-arrow-left me-1"></i>Back to Store</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

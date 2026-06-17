@@ -1,0 +1,65 @@
+{% extends 'admin_panel/base_admin.html' %}
+{% block title %}Categories{% endblock %}
+{% block content %}
+<div class="admin-page-header mb-4">
+  <h4 class="admin-page-title">Categories</h4>
+</div>
+
+<div class="row g-4">
+  <!-- Add Form -->
+  <div class="col-lg-4">
+    <div class="admin-card">
+      <h6 class="filter-heading mb-3"><i class="bi bi-plus-circle me-2 gold-text"></i>Add Category</h6>
+      <form method="POST" action="{% url 'admin_category_add' %}">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label royal-label">Name *</label>
+          <input type="text" name="name" class="form-control royal-input" required placeholder="e.g. Electronics"/>
+        </div>
+        <div class="mb-3">
+          <label class="form-label royal-label">Bootstrap Icon Class</label>
+          <input type="text" name="icon" class="form-control royal-input" value="bi-grid" placeholder="bi-laptop"/>
+          <small class="text-muted">Visit <a href="https://icons.getbootstrap.com" target="_blank" class="gold-text">Bootstrap Icons</a></small>
+        </div>
+        <div class="mb-3">
+          <label class="form-label royal-label">Description</label>
+          <textarea name="description" class="form-control royal-input" rows="2"></textarea>
+        </div>
+        <button type="submit" class="btn btn-gold w-100">Add Category</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- List -->
+  <div class="col-lg-8">
+    <div class="admin-card p-0">
+      <div class="table-responsive">
+        <table class="table admin-table mb-0">
+          <thead><tr><th>Icon</th><th>Name</th><th>Products</th><th>Action</th></tr></thead>
+          <tbody>
+            {% for cat in categories %}
+            <tr>
+              <td><i class="bi {{ cat.icon }} gold-text fs-5"></i></td>
+              <td>
+                <div class="fw-semibold">{{ cat.name }}</div>
+                <small class="text-muted">{{ cat.slug }}</small>
+              </td>
+              <td><span class="badge bg-secondary">{{ cat.product_count }}</span></td>
+              <td>
+                <form method="POST" action="{% url 'admin_category_delete' cat.id %}"
+                      onsubmit="return confirm('Delete {{ cat.name }}?')">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></button>
+                </form>
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4" class="text-center text-muted py-4">No categories yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

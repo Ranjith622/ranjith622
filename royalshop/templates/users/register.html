@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="auth-card mx-auto">
+    <div class="auth-header text-center mb-4">
+      <i class="bi bi-crown-fill gold-text" style="font-size:2.5rem"></i>
+      <h3 class="mt-2" style="font-family:'Playfair Display',serif">Join RoyalShop</h3>
+      <p class="text-muted small">Create your account and start shopping</p>
+    </div>
+    <form method="POST">
+      {% csrf_token %}
+      <div class="row g-3">
+        <div class="col-6">
+          <label class="form-label royal-label">First Name</label>
+          <input type="text" name="first_name" class="form-control royal-input" placeholder="First"/>
+        </div>
+        <div class="col-6">
+          <label class="form-label royal-label">Last Name</label>
+          <input type="text" name="last_name" class="form-control royal-input" placeholder="Last"/>
+        </div>
+        <div class="col-12">
+          <label class="form-label royal-label">Username *</label>
+          <div class="input-icon-wrap">
+            <i class="bi bi-person input-icon"></i>
+            <input type="text" name="username" class="form-control royal-input ps-5" required placeholder="Choose a username"/>
+          </div>
+        </div>
+        <div class="col-12">
+          <label class="form-label royal-label">Email *</label>
+          <div class="input-icon-wrap">
+            <i class="bi bi-envelope input-icon"></i>
+            <input type="email" name="email" class="form-control royal-input ps-5" required placeholder="your@email.com"/>
+          </div>
+        </div>
+        <div class="col-12">
+          <label class="form-label royal-label">Password *</label>
+          <div class="input-icon-wrap">
+            <i class="bi bi-lock input-icon"></i>
+            <input type="password" name="password1" class="form-control royal-input ps-5" required placeholder="Min 8 characters"/>
+          </div>
+        </div>
+        <div class="col-12">
+          <label class="form-label royal-label">Confirm Password *</label>
+          <div class="input-icon-wrap">
+            <i class="bi bi-lock-fill input-icon"></i>
+            <input type="password" name="password2" class="form-control royal-input ps-5" required placeholder="Repeat password"/>
+          </div>
+        </div>
+        <div class="col-12 mt-2">
+          <button type="submit" class="btn btn-gold w-100 btn-lg">
+            <i class="bi bi-person-plus me-2"></i>Create Account
+          </button>
+        </div>
+      </div>
+    </form>
+    <p class="text-center mt-3 text-muted">
+      Already have an account? <a href="{% url 'user_login' %}" class="gold-text fw-semibold">Login</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

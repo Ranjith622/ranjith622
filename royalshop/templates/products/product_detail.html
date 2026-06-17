@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+  <!-- Breadcrumb -->
+  <nav class="mb-4"><ol class="breadcrumb royal-breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'product_list' %}">Products</a></li>
+    {% if product.category %}
+    <li class="breadcrumb-item"><a href="{% url 'product_list' %}?category={{ product.category.slug }}">{{ product.category.name }}</a></li>
+    {% endif %}
+    <li class="breadcrumb-item active">{{ product.name|truncatechars:30 }}</li>
+  </ol></nav>
+
+  <div class="row g-5">
+    <!-- Product Image -->
+    <div class="col-lg-5">
+      <div class="detail-img-wrap">
+        {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="detail-img" id="mainImage"/>
+        {% else %}
+        <div class="detail-img-placeholder"><i class="bi bi-image" style="font-size:5rem;color:var(--gold-muted)"></i></div>
+        {% endif %}
+        {% if product.discount_percent %}
+        <div class="detail-discount-badge">{{ product.discount_percent }}% OFF</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Product Info -->
+    <div class="col-lg-7">
+      {% if product.category %}
+      <span class="product-category mb-2 d-inline-block">{{ product.category.name }}</span>
+      {% endif %}
+
+      <h1 class="detail-product-name">{{ product.name }}</h1>
+
+      <!-- Price -->
+      <div class="detail-price-row">
+        <span class="detail-price">₹{{ product.price }}</span>
+        {% if product.original_price %}
+        <span class="detail-original-price">₹{{ product.original_price }}</span>
+        <span class="detail-savings">Save ₹{{ product.original_price|floatformat:2 }}</span>
+        {% endif %}
+      </div>
+
+      <!-- Stock status -->
+      <div class="detail-stock my-3">
+        {% if product.in_stock %}
+          <span class="stock-badge-in"><i class="bi bi-check-circle-fill me-1"></i>
+            {% if product.stock <= 5 %}Only {{ product.stock }} left!{% else %}In Stock ({{ product.stock }} available){% endif %}
+          </span>
+        {% else %}
+          <span class="stock-badge-out"><i class="bi bi-x-circle-fill me-1"></i>Out of Stock</span>
+        {% endif %}
+      </div>
+
+      {% if product.description %}
+      <div class="detail-description">
+        <h6 class="detail-section-label">Description</h6>
+        <p class="text-muted">{{ product.description }}</p>
+      </div>
+      {% endif %}
+
+      <!-- Add to Cart -->
+      {% if product.in_stock %}
+      <div class="detail-cart-section">
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+          <div class="qty-control qty-lg">
+            <button class="qty-btn qty-minus" data-pid="{{ product.id }}">−</button>
+            <input type="number" class="qty-input" id="qty-{{ product.id }}"
+                   value="1" min="1" max="{{ product.stock }}"/>
+            <button class="qty-btn qty-plus" data-pid="{{ product.id }}" data-max="{{ product.stock }}">+</button>
+          </div>
+          <button class="btn-add-cart btn-add-cart-lg"
+                  onclick="addToCart({{ product.id }}, document.getElementById('qty-{{ product.id }}').value)">
+            <i class="bi bi-bag-plus me-2"></i>Add to Cart
+          </button>
+          <a href="{% url 'cart' %}" class="btn btn-outline-gold">
+            <i class="bi bi-bag me-1"></i>View Cart
+          </a>
+        </div>
+      </div>
+      {% else %}
+      <button class="btn-add-cart btn-add-cart-lg disabled" disabled>
+        <i class="bi bi-bag-x me-2"></i>Out of Stock
+      </button>
+      {% endif %}
+
+      <!-- Trust badges -->
+      <div class="trust-badges mt-4">
+        <span><i class="bi bi-shield-check gold-text"></i> Secure Checkout</span>
+        <span><i class="bi bi-truck gold-text"></i> Fast Delivery</span>
+        <span><i class="bi bi-arrow-repeat gold-text"></i> Easy Returns</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Related Products -->
+  {% if related_products %}
+  <div class="mt-6 pt-5">
+    <h3 class="section-title mb-4">Related Products</h3>
+    <div class="row g-4">
+      {% for p in related_products %}
+      {% with product=p %}{% include 'partials/product_card.html' %}{% endwith %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

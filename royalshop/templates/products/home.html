@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<!-- ══════════════════ HERO BANNER CAROUSEL ══════════════════ -->
+<section class="hero-section">
+  {% if banners %}
+  <div id="heroBanner" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="4000">
+    <div class="carousel-indicators">
+      {% for banner in banners %}
+      <button type="button" data-bs-target="#heroBanner" data-bs-slide-to="{{ forloop.counter0 }}"
+              {% if forloop.first %}class="active"{% endif %}></button>
+      {% endfor %}
+    </div>
+
+    <div class="carousel-inner">
+      {% for banner in banners %}
+      <div class="carousel-item {% if forloop.first %}active{% endif %}"
+           style="background-color:{{ banner.bg_color }}">
+        <div class="banner-slide">
+          <div class="container-fluid px-5">
+            <div class="row align-items-center min-vh-55">
+              <div class="col-lg-6 banner-text-col">
+                {% if banner.badge_text %}
+                <div class="banner-badge animate-slide-up">{{ banner.badge_text }}</div>
+                {% endif %}
+                <h1 class="banner-title animate-slide-up delay-1">{{ banner.title }}</h1>
+                {% if banner.subtitle %}
+                <p class="banner-subtitle animate-slide-up delay-2">{{ banner.subtitle }}</p>
+                {% endif %}
+                <a href="{{ banner.button_url }}" class="btn btn-gold btn-lg banner-cta animate-slide-up delay-3">
+                  {{ banner.button_text }} <i class="bi bi-arrow-right ms-2"></i>
+                </a>
+              </div>
+              {% if banner.image %}
+              <div class="col-lg-6 text-center d-none d-lg-block">
+                <img src="{{ banner.image.url }}" alt="{{ banner.title }}" class="banner-image animate-float"/>
+              </div>
+              {% else %}
+              <div class="col-lg-6 text-center d-none d-lg-block">
+                <div class="banner-placeholder-icon">
+                  <i class="bi bi-bag-heart-fill"></i>
+                </div>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroBanner" data-bs-slide="prev">
+      <div class="carousel-ctrl-btn"><i class="bi bi-chevron-left"></i></div>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroBanner" data-bs-slide="next">
+      <div class="carousel-ctrl-btn"><i class="bi bi-chevron-right"></i></div>
+    </button>
+  </div>
+
+  {% else %}
+  <!-- Default banner if none exist -->
+  <div class="default-banner">
+    <div class="container-fluid px-5">
+      <div class="row align-items-center min-vh-55">
+        <div class="col-lg-6">
+          <div class="banner-badge">🎉 Grand Opening Sale</div>
+          <h1 class="banner-title">Welcome to <br/><span class="gold-text">RoyalShop</span></h1>
+          <p class="banner-subtitle">Discover premium products at unbeatable prices. Shop like royalty.</p>
+          <a href="{% url 'product_list' %}" class="btn btn-gold btn-lg banner-cta">
+            Explore Products <i class="bi bi-arrow-right ms-2"></i>
+          </a>
+        </div>
+        <div class="col-lg-6 text-center d-none d-lg-block">
+          <div class="banner-placeholder-icon"><i class="bi bi-crown-fill"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</section>
+
+<!-- ══════════════════ CATEGORY PILLS ══════════════════ -->
+{% if categories %}
+<section class="category-section py-4">
+  <div class="container-fluid px-4">
+    <div class="category-scroll-row">
+      <a href="{% url 'product_list' %}" class="category-pill active-pill">
+        <i class="bi bi-grid-fill me-1"></i> All
+      </a>
+      {% for cat in categories %}
+      <a href="{% url 'product_list' %}?category={{ cat.slug }}" class="category-pill">
+        <i class="bi {{ cat.icon }} me-1"></i> {{ cat.name }}
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ══════════════════ FEATURED PRODUCTS ══════════════════ -->
+{% if featured_products %}
+<section class="products-section py-5">
+  <div class="container-fluid px-4">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">Featured Products</h2>
+        <p class="section-subtitle">Hand-picked for royalty</p>
+      </div>
+      <a href="{% url 'product_list' %}" class="btn btn-outline-gold">View All <i class="bi bi-arrow-right ms-1"></i></a>
+    </div>
+
+    <div class="row g-4">
+      {% for product in featured_products %}
+      {% include 'partials/product_card.html' %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ══════════════════ PROMO BANNER ══════════════════ -->
+<section class="promo-strip py-4">
+  <div class="container-fluid px-4">
+    <div class="row g-3">
+      <div class="col-md-3 col-6">
+        <div class="promo-feature">
+          <i class="bi bi-truck-front-fill gold-text fs-2"></i>
+          <div>
+            <strong>Free Delivery</strong>
+            <small>On orders over ₹500</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="promo-feature">
+          <i class="bi bi-shield-check-fill gold-text fs-2"></i>
+          <div>
+            <strong>Secure Payment</strong>
+            <small>100% protected</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="promo-feature">
+          <i class="bi bi-arrow-repeat gold-text fs-2"></i>
+          <div>
+            <strong>Easy Returns</strong>
+            <small>30-day policy</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="promo-feature">
+          <i class="bi bi-headset gold-text fs-2"></i>
+          <div>
+            <strong>24/7 Support</strong>
+            <small>Always here for you</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ LATEST PRODUCTS ══════════════════ -->
+{% if latest_products %}
+<section class="products-section py-5">
+  <div class="container-fluid px-4">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">New Arrivals</h2>
+        <p class="section-subtitle">Fresh stock just landed</p>
+      </div>
+      <a href="{% url 'product_list' %}?sort=newest" class="btn btn-outline-gold">See More <i class="bi bi-arrow-right ms-1"></i></a>
+    </div>
+
+    <div class="row g-4">
+      {% for product in latest_products %}
+      {% include 'partials/product_card.html' %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ══════════════════ NEWSLETTER BANNER ══════════════════ -->
+<section class="newsletter-section py-5">
+  <div class="container-fluid px-4">
+    <div class="newsletter-card">
+      <div class="row align-items-center">
+        <div class="col-md-6 mb-3 mb-md-0">
+          <h3 class="mb-1">Join the Royal Circle</h3>
+          <p class="mb-0 text-muted">Get exclusive deals and early access to new arrivals.</p>
+        </div>
+        <div class="col-md-6">
+          <div class="input-group newsletter-input-group">
+            <input type="email" class="form-control newsletter-input" placeholder="Enter your email address"/>
+            <button class="btn btn-gold px-4">Subscribe</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

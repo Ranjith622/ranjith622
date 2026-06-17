@@ -1,0 +1,90 @@
+{% extends 'admin_panel/base_admin.html' %}
+{% block title %}Products{% endblock %}
+
+{% block content %}
+<div class="admin-page-header mb-4">
+  <div>
+    <h4 class="admin-page-title">Products</h4>
+    <p class="text-muted small">{{ products.count }} product{{ products.count|pluralize }}</p>
+  </div>
+  <a href="{% url 'admin_product_add' %}" class="btn btn-gold">
+    <i class="bi bi-plus-circle me-2"></i>Add Product
+  </a>
+</div>
+
+<!-- Search -->
+<form method="GET" class="mb-3">
+  <div class="input-group" style="max-width:350px">
+    <input type="text" name="q" class="form-control royal-input" placeholder="Search products…" value="{{ q }}"/>
+    <button class="btn btn-gold" type="submit"><i class="bi bi-search"></i></button>
+  </div>
+</form>
+
+<div class="admin-card p-0">
+  <div class="table-responsive">
+    <table class="table admin-table mb-0">
+      <thead>
+        <tr>
+          <th>Image</th><th>Name</th><th>Category</th>
+          <th>Price</th><th>Stock</th><th>Featured</th><th>Active</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in products %}
+        <tr>
+          <td>
+            {% if p.image %}
+            <img src="{{ p.image.url }}" alt="{{ p.name }}" class="admin-thumb"/>
+            {% else %}
+            <div class="admin-thumb-placeholder"><i class="bi bi-image"></i></div>
+            {% endif %}
+          </td>
+          <td>
+            <div class="fw-semibold">{{ p.name }}</div>
+            <small class="text-muted">{{ p.slug }}</small>
+          </td>
+          <td><small>{{ p.category.name|default:"—" }}</small></td>
+          <td>
+            <span class="gold-text fw-semibold">₹{{ p.price }}</span>
+            {% if p.original_price %}<br><small class="text-muted text-decoration-line-through">₹{{ p.original_price }}</small>{% endif %}
+          </td>
+          <td>
+            {% if p.stock <= 5 %}
+            <span class="badge bg-warning text-dark">{{ p.stock }}</span>
+            {% elif p.stock == 0 %}
+            <span class="badge bg-danger">Out</span>
+            {% else %}
+            <span class="badge bg-success">{{ p.stock }}</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if p.is_featured %}<i class="bi bi-star-fill gold-text"></i>{% else %}<i class="bi bi-star text-muted"></i>{% endif %}
+          </td>
+          <td>
+            {% if p.is_active %}<span class="badge bg-success">Active</span>{% else %}<span class="badge bg-secondary">Hidden</span>{% endif %}
+          </td>
+          <td>
+            <div class="d-flex gap-1">
+              <a href="{% url 'admin_product_edit' p.id %}" class="btn btn-sm btn-outline-gold" title="Edit">
+                <i class="bi bi-pencil"></i>
+              </a>
+              <form method="POST" action="{% url 'admin_product_delete' p.id %}" onsubmit="return confirm('Delete {{ p.name }}?')">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                  <i class="bi bi-trash3"></i>
+                </button>
+              </form>
+              <a href="{% url 'product_detail' p.slug %}" class="btn btn-sm btn-outline-secondary" title="View" target="_blank">
+                <i class="bi bi-eye"></i>
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8" class="text-center py-5 text-muted">No products found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

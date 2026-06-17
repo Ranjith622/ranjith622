@@ -1,0 +1,87 @@
+{% load static %}
+<div class="col-xl-3 col-lg-4 col-md-4 col-sm-6">
+  <div class="product-card">
+    <!-- Badges -->
+    <div class="product-badges">
+      {% if product.discount_percent %}
+      <span class="badge-discount">-{{ product.discount_percent }}%</span>
+      {% endif %}
+      {% if product.is_featured %}
+      <span class="badge-featured"><i class="bi bi-star-fill"></i></span>
+      {% endif %}
+      {% if not product.in_stock %}
+      <span class="badge-out">Out of Stock</span>
+      {% endif %}
+    </div>
+
+    <!-- Image -->
+    <a href="{% url 'product_detail' product.slug %}" class="product-img-link">
+      <div class="product-img-wrap">
+        {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-img" loading="lazy"/>
+        {% else %}
+        <div class="product-img-placeholder">
+          <i class="bi bi-image text-muted" style="font-size:3rem"></i>
+        </div>
+        {% endif %}
+        <div class="product-img-overlay">
+          <a href="{% url 'product_detail' product.slug %}" class="quick-view-btn">
+            <i class="bi bi-eye me-1"></i>Quick View
+          </a>
+        </div>
+      </div>
+    </a>
+
+    <!-- Info -->
+    <div class="product-info">
+      {% if product.category %}
+      <span class="product-category">{{ product.category.name }}</span>
+      {% endif %}
+      <h6 class="product-name">
+        <a href="{% url 'product_detail' product.slug %}">{{ product.name }}</a>
+      </h6>
+
+      <!-- Price -->
+      <div class="product-price-row">
+        <span class="product-price">₹{{ product.price }}</span>
+        {% if product.original_price %}
+        <span class="product-original-price">₹{{ product.original_price }}</span>
+        {% endif %}
+      </div>
+
+      <!-- Stock info -->
+      <div class="stock-info mb-2">
+        {% if product.in_stock %}
+          {% if product.stock <= 5 %}
+          <small class="text-warning"><i class="bi bi-exclamation-circle me-1"></i>Only {{ product.stock }} left</small>
+          {% else %}
+          <small class="text-success"><i class="bi bi-check-circle me-1"></i>In Stock</small>
+          {% endif %}
+        {% else %}
+          <small class="text-danger"><i class="bi bi-x-circle me-1"></i>Out of Stock</small>
+        {% endif %}
+      </div>
+
+      <!-- Quantity + Add to Cart -->
+      {% if product.in_stock %}
+      <div class="product-actions">
+        <div class="qty-control">
+          <button class="qty-btn qty-minus" data-pid="{{ product.id }}">−</button>
+          <input type="number" class="qty-input" id="qty-{{ product.id }}" value="1" min="1" max="{{ product.stock }}"/>
+          <button class="qty-btn qty-plus" data-pid="{{ product.id }}" data-max="{{ product.stock }}">+</button>
+        </div>
+        <button class="btn-add-cart"
+                data-pid="{{ product.id }}"
+                data-name="{{ product.name }}"
+                onclick="addToCart({{ product.id }}, document.getElementById('qty-{{ product.id }}').value)">
+          <i class="bi bi-bag-plus me-1"></i>Add
+        </button>
+      </div>
+      {% else %}
+      <button class="btn-add-cart disabled w-100" disabled>
+        <i class="bi bi-bag-x me-1"></i>Out of Stock
+      </button>
+      {% endif %}
+    </div>
+  </div>
+</div>

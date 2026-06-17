@@ -1,0 +1,101 @@
+{% extends 'admin_panel/base_admin.html' %}
+{% block title %}{{ action }} Product{% endblock %}
+
+{% block content %}
+<div class="admin-page-header mb-4">
+  <div>
+    <h4 class="admin-page-title">{{ action }} Product</h4>
+    <p class="text-muted small">{% if product %}Editing: {{ product.name }}{% else %}Fill in the details below{% endif %}</p>
+  </div>
+  <a href="{% url 'admin_products' %}" class="btn btn-outline-gold">
+    <i class="bi bi-arrow-left me-1"></i>Back
+  </a>
+</div>
+
+<div class="admin-card" style="max-width:800px">
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row g-3">
+
+      <div class="col-12">
+        <label class="form-label royal-label">Product Name *</label>
+        <input type="text" name="name" class="form-control royal-input"
+               value="{{ product.name|default:'' }}" required placeholder="e.g. Royal Basmati Rice"/>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label royal-label">Category</label>
+        <select name="category" class="form-select royal-input">
+          <option value="">-- No Category --</option>
+          {% for cat in categories %}
+          <option value="{{ cat.id }}" {% if product.category_id == cat.id %}selected{% endif %}>
+            {{ cat.name }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label royal-label">Selling Price (₹) *</label>
+        <input type="number" name="price" class="form-control royal-input"
+               value="{{ product.price|default:'' }}" required step="0.01" min="0" placeholder="0.00"/>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label royal-label">Original Price (₹)</label>
+        <input type="number" name="original_price" class="form-control royal-input"
+               value="{{ product.original_price|default:'' }}" step="0.01" min="0" placeholder="MRP (optional)"/>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label royal-label">Stock Quantity *</label>
+        <input type="number" name="stock" class="form-control royal-input"
+               value="{{ product.stock|default:'0' }}" required min="0"/>
+      </div>
+
+      <div class="col-md-4 d-flex align-items-end">
+        <div class="form-check form-switch mt-2">
+          <input type="checkbox" class="form-check-input" name="is_featured" id="isFeatured"
+                 {% if product.is_featured %}checked{% endif %} style="width:2.5em;height:1.4em"/>
+          <label class="form-check-label royal-label ms-2" for="isFeatured">Featured Product</label>
+        </div>
+      </div>
+
+      {% if product %}
+      <div class="col-md-4 d-flex align-items-end">
+        <div class="form-check form-switch mt-2">
+          <input type="checkbox" class="form-check-input" name="is_active" id="isActive"
+                 {% if product.is_active %}checked{% endif %} style="width:2.5em;height:1.4em"/>
+          <label class="form-check-label royal-label ms-2" for="isActive">Active / Visible</label>
+        </div>
+      </div>
+      {% endif %}
+
+      <div class="col-12">
+        <label class="form-label royal-label">Description</label>
+        <textarea name="description" class="form-control royal-input" rows="3"
+                  placeholder="Product description…">{{ product.description|default:'' }}</textarea>
+      </div>
+
+      <div class="col-12">
+        <label class="form-label royal-label">Product Image</label>
+        {% if product.image %}
+        <div class="mb-2">
+          <img src="{{ product.image.url }}" alt="Current" style="height:80px;border-radius:8px;border:2px solid var(--gold-muted)"/>
+          <small class="text-muted ms-2">Current image</small>
+        </div>
+        {% endif %}
+        <input type="file" name="image" class="form-control royal-input" accept="image/*"/>
+        <small class="text-muted">Recommended: 800×800px, JPEG or PNG</small>
+      </div>
+
+      <div class="col-12 mt-3 d-flex gap-2">
+        <button type="submit" class="btn btn-gold px-5">
+          <i class="bi bi-check-circle me-2"></i>{{ action }} Product
+        </button>
+        <a href="{% url 'admin_products' %}" class="btn btn-outline-secondary px-4">Cancel</a>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}

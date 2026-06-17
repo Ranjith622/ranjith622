@@ -1,0 +1,239 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}RoyalShop{% endblock %} | Royal Shopping Experience</title>
+
+  <!-- Bootstrap 5 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"/>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{% static 'css/royal.css' %}"/>
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<!-- ══════════════════ TOP BAR ══════════════════ -->
+<div class="top-bar">
+  <div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center">
+      <span><i class="bi bi-truck me-1"></i> Free shipping on orders above ₹500</span>
+      <span class="d-none d-md-inline">
+        <i class="bi bi-telephone me-1"></i> +91 98765 43210 &nbsp;|&nbsp;
+        <i class="bi bi-clock me-1"></i> Mon–Sat 9AM–6PM
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ NAVBAR ══════════════════ -->
+<nav class="navbar navbar-expand-lg royal-navbar sticky-top">
+  <div class="container-fluid px-4">
+
+    <!-- Brand -->
+    <a class="navbar-brand royal-brand" href="{% url 'home' %}">
+      <i class="bi bi-crown-fill gold-text me-2"></i>RoyalShop
+    </a>
+
+    <!-- Mobile toggles -->
+    <div class="d-flex align-items-center gap-2 d-lg-none">
+      <a href="{% url 'cart' %}" class="nav-icon-btn position-relative">
+        <i class="bi bi-bag-fill"></i>
+        {% if cart_count > 0 %}
+        <span class="cart-badge">{{ cart_count }}</span>
+        {% endif %}
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <i class="bi bi-list text-white fs-4"></i>
+      </button>
+    </div>
+
+    <div class="collapse navbar-collapse" id="mainNav">
+      <!-- Search Bar -->
+      <form class="search-form mx-auto" action="{% url 'product_list' %}" method="GET">
+        <div class="search-wrapper">
+          <input type="text" name="q" class="search-input" placeholder="Search products…"
+                 value="{{ request.GET.q }}"/>
+          <button type="submit" class="search-btn"><i class="bi bi-search"></i></button>
+        </div>
+      </form>
+
+      <!-- Nav links -->
+      <ul class="navbar-nav align-items-lg-center gap-1 ms-2">
+        <li class="nav-item">
+          <a class="nav-link royal-nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+             href="{% url 'home' %}">Home</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link royal-nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+            Categories
+          </a>
+          <ul class="dropdown-menu royal-dropdown">
+            <li><a class="dropdown-item" href="{% url 'product_list' %}">All Products</a></li>
+            <li><hr class="dropdown-divider"/></li>
+            {% for cat in all_categories %}
+            <li>
+              <a class="dropdown-item" href="{% url 'product_list' %}?category={{ cat.slug }}">
+                <i class="bi {{ cat.icon }} me-2 gold-text"></i>{{ cat.name }}
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link royal-nav-link {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}"
+             href="{% url 'product_list' %}">Products</a>
+        </li>
+
+        <!-- Auth -->
+        {% if user.is_authenticated %}
+        <li class="nav-item dropdown">
+          <a class="nav-link royal-nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+            <i class="bi bi-person-circle me-1"></i>{{ user.first_name|default:user.username }}
+          </a>
+          <ul class="dropdown-menu royal-dropdown dropdown-menu-end">
+            <li><a class="dropdown-item" href="{% url 'user_profile' %}"><i class="bi bi-person me-2"></i>Profile</a></li>
+            <li><a class="dropdown-item" href="{% url 'my_orders' %}"><i class="bi bi-bag me-2"></i>My Orders</a></li>
+            {% if user.is_staff or user.is_superuser %}
+            <li><hr class="dropdown-divider"/></li>
+            <li><a class="dropdown-item gold-text" href="{% url 'admin_dashboard' %}"><i class="bi bi-shield-lock me-2"></i>Admin Panel</a></li>
+            {% endif %}
+            <li><hr class="dropdown-divider"/></li>
+            <li><a class="dropdown-item text-danger" href="{% url 'user_logout' %}"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+          </ul>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link royal-nav-link" href="{% url 'user_login' %}">
+            <i class="bi bi-person me-1"></i>Login
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="btn btn-gold btn-sm ms-1" href="{% url 'user_register' %}">Register</a>
+        </li>
+        {% endif %}
+
+        <!-- Cart -->
+        <li class="nav-item d-none d-lg-block">
+          <a href="{% url 'cart' %}" class="nav-icon-btn position-relative ms-2">
+            <i class="bi bi-bag-fill"></i>
+            {% if cart_count > 0 %}
+            <span class="cart-badge">{{ cart_count }}</span>
+            {% endif %}
+          </a>
+        </li>
+      </ul>
+    </div><!-- /collapse -->
+  </div>
+</nav>
+
+<!-- ══════════════════ MESSAGES ══════════════════ -->
+{% if messages %}
+<div class="container-fluid px-4 mt-2">
+  {% for msg in messages %}
+  <div class="alert alert-{{ msg.tags }} alert-dismissible fade show royal-alert" role="alert">
+    <i class="bi bi-{% if msg.tags == 'success' %}check-circle{% elif msg.tags == 'danger' %}exclamation-triangle{% elif msg.tags == 'warning' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
+    {{ msg }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- ══════════════════ MAIN CONTENT ══════════════════ -->
+<main class="main-content">
+  {% block content %}{% endblock %}
+</main>
+
+<!-- ══════════════════ FOOTER ══════════════════ -->
+<footer class="royal-footer mt-5">
+  <div class="container-fluid px-4">
+    <div class="row py-5">
+      <!-- Brand column -->
+      <div class="col-lg-3 col-md-6 mb-4">
+        <h5 class="royal-brand mb-3"><i class="bi bi-crown-fill gold-text me-2"></i>RoyalShop</h5>
+        <p class="text-muted small">Experience the finest products curated for royalty. Quality, elegance, and trust – delivered to your doorstep.</p>
+        <div class="social-links mt-3">
+          <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
+          <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
+          <a href="#" class="social-icon"><i class="bi bi-twitter-x"></i></a>
+          <a href="#" class="social-icon"><i class="bi bi-youtube"></i></a>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="col-lg-2 col-md-6 mb-4">
+        <h6 class="footer-heading">Quick Links</h6>
+        <ul class="footer-links">
+          <li><a href="{% url 'home' %}">Home</a></li>
+          <li><a href="{% url 'product_list' %}">Products</a></li>
+          <li><a href="{% url 'cart' %}">Cart</a></li>
+          {% if user.is_authenticated %}
+          <li><a href="{% url 'my_orders' %}">My Orders</a></li>
+          {% else %}
+          <li><a href="{% url 'user_login' %}">Login</a></li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <!-- Categories -->
+      <div class="col-lg-3 col-md-6 mb-4">
+        <h6 class="footer-heading">Categories</h6>
+        <ul class="footer-links">
+          {% for cat in all_categories|slice:":5" %}
+          <li><a href="{% url 'product_list' %}?category={{ cat.slug }}">{{ cat.name }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div class="col-lg-4 col-md-6 mb-4">
+        <h6 class="footer-heading">Contact Us</h6>
+        <ul class="footer-contact">
+          <li><i class="bi bi-geo-alt gold-text me-2"></i>123 Royal Street, Chennai, TN 600001</li>
+          <li><i class="bi bi-telephone gold-text me-2"></i>+91 98765 43210</li>
+          <li><i class="bi bi-envelope gold-text me-2"></i>support@royalshop.in</li>
+        </ul>
+        <div class="mt-3">
+          <img src="https://via.placeholder.com/250x40/0B3D2E/C9A227?text=Secure+Payment+Gateway" alt="Payment" class="img-fluid rounded" style="opacity:0.7"/>
+        </div>
+      </div>
+    </div>
+
+    <hr class="footer-divider"/>
+    <div class="row py-3">
+      <div class="col-md-6 text-center text-md-start">
+        <small class="text-muted">© 2024 RoyalShop. All rights reserved.</small>
+      </div>
+      <div class="col-md-6 text-center text-md-end">
+        <small class="text-muted">Built with <i class="bi bi-heart-fill text-danger mx-1"></i>using Django & Bootstrap</small>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Cart Toast Notification -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:9999">
+  <div id="cartToast" class="toast royal-toast align-items-center" role="alert">
+    <div class="d-flex">
+      <div class="toast-body" id="toastMessage">
+        <i class="bi bi-bag-check-fill me-2 gold-text"></i> Item added to cart!
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Custom JS -->
+<script src="{% static 'js/royal.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>
