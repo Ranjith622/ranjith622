@@ -73,11 +73,11 @@ WSGI_APPLICATION = 'royalshop.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('MYSQLDATABASE'),
-        'USER': os.getenv('MYSQLUSER'),
-        'PASSWORD': os.getenv('MYSQLPASSWORD'),
-        'HOST': os.getenv('MYSQLHOST'),
-        'PORT': os.getenv('MYSQLPORT','3306'),
+        'NAME': os.getenv('royalshop_db'),
+        'USER': os.getenv('root'),
+        'PASSWORD': os.getenv('root'),
+        'HOST': os.getenv('localhost'),
+        'PORT': os.getenv('3306'),
         'OPTIONS': {
             'charset': 'utf8mb4',
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
