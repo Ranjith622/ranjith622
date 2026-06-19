@@ -10,11 +10,13 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY - Change this in production!
-SECRET_KEY = 'django-insecure-royalshop-change-this-in-production-2024'
+SECRET_KEY = os.getenv(
+    'SECRET_KEY',
+    'django-insecure-royalshop-change-this-in-production-2024'
+)
+DEBUG = False  # Set to False in production
 
-DEBUG = True  # Set to False in production
-
-ALLOWED_HOSTS = ['52.66..239.49','*']  # Restrict in production
+ALLOWED_HOSTS =  ['*']  # Restrict in production
 
 # ─── Installed Apps ──────────────────────────────────────────────────────────
 INSTALLED_APPS = [
@@ -33,6 +35,8 @@ INSTALLED_APPS = [
 # ─── Middleware ───────────────────────────────────────────────────────────────
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -69,11 +73,11 @@ WSGI_APPLICATION = 'royalshop.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'royalshop_db',       # Your database name
-        'USER': 'root',               # Your MySQL username
-        'PASSWORD': 'root',  # Your MySQL password
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'NAME': os.getenv('MYSQLDATABASE'),
+        'USER': os.getenv('MYSQLUSER'),
+        'PASSWORD': os.getenv('MYSQLPASSWORD'),
+        'HOST': os.getenv('MYSQLHOST'),
+        'PORT': os.getenv('MYSQLPORT','3306'),
         'OPTIONS': {
             'charset': 'utf8mb4',
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
@@ -99,7 +103,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
